@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokédex — Explora y valora</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <a class="brand" href="index.html" onclick="goHome(); return false;">POKÉ<span>DEX</span></a>
+    <nav aria-label="Seleccionar región">
+      <button class="region-button active" id="btn-kanto" type="button" onclick="selectRegion('Kanto')">Kanto</button>
+      <button class="region-button" id="btn-johto" type="button" onclick="selectRegion('Johto')">Johto</button>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </div>
+</header>
+
+<section class="home" id="home">
+  <div class="hero">
+    <div class="eyebrow">ENCICLOPEDIA DE LA COMUNIDAD</div>
+    <h1>Descubre tu Pokémon favorito.</h1>
+    <p class="intro">Explora las regiones, conoce cada Pokémon y comparte tu valoración.</p>
+  </div>
+  <main>
+    <div class="toolbar">
+      <input id="search" type="search" placeholder="Buscar por nombre o número..." aria-label="Buscar Pokémon">
+      <div class="region-label" id="region-label" style="display:flex;align-items:center;padding:0 4px;color:var(--muted);font-size:13px;">Región: Kanto</div>
+    </div>
+    <p class="count" id="count"></p>
+    <div class="grid" id="pokemon-grid"></div>
+    <section class="contact" id="contacto">
+      <div><strong>¿Tienes una sugerencia o quieres contactarme?</strong><p>Envíame un mensaje sobre la Pokédex.</p></div>
+      <!-- Cambia este correo por tu dirección real. -->
+      <a class="button" href="mailto:tu-correo@ejemplo.com?subject=Mensaje%20desde%20la%20Pokedex">Enviarme un mensaje</a>
+    </section>
+  </main>
+</section>
+
+<section class="detail" id="detail">
+  <main>
+    <a class="back" href="#" onclick="goHome(); return false;">← Volver a la Pokédex</a>
+    <div class="detail-layout">
+      <div>
+        <div class="detail-main-art" id="detail-art"></div>
+        <div id="detail-verification" style="margin-top:10px;"></div>
+        <div class="gallery" id="detail-gallery"></div>
+      </div>
+      <div>
+        <div class="eyebrow" id="detail-region"></div>
+        <h2 id="detail-name"></h2>
+        <div class="pokemon-number" id="detail-number"></div>
+        <p class="detail-description" id="detail-description"></p>
+        <div class="rating-panel">
+          <strong>Valoración de la comunidad</strong>
+          <div class="stars" id="detail-average">☆☆☆☆☆</div>
+          <p class="small" id="detail-votes">Aún no hay valoraciones.</p>
+          <hr style="border:0;border-top:1px solid #e5e8ed;margin:18px 0">
+          <strong>¿Cuántas estrellas le das?</strong>
+          <div class="rating-picker" id="rating-picker" aria-label="Selecciona una valoración">
+            <button type="button" data-value="1" aria-label="1 estrella">★</button>
+            <button type="button" data-value="2" aria-label="2 estrellas">★</button>
+            <button type="button" data-value="3" aria-label="3 estrellas">★</button>
+            <button type="button" data-value="4" aria-label="4 estrellas">★</button>
+            <button type="button" data-value="5" aria-label="5 estrellas">★</button>
+          </div>
+          <button class="button" type="button" onclick="signInToRate()">Iniciar sesión con Google para valorar</button>
+          <p class="small">La conexión real con Google y el almacenamiento compartido de las valoraciones se habilitan al configurar Firebase. En esta versión de demostración las valoraciones no se publican.</p>
+        </div>
+
+        <div class="rating-panel" style="margin-top:14px;">
+          <strong>¿Consideras correcta su verificación?</strong>
+          <p class="small">La comunidad puede votar si considera que este Pokémon está correctamente identificado como oficial o si debería revisarse su clasificación.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0;">
+            <button class="button secondary" type="button" onclick="requestVerificationReview('real')">Es real</button>
+            <button class="button secondary" type="button" onclick="requestVerificationReview('false')">Es falsa</button>
+          </div>
+          <p class="small" id="verification-vote-status">Los votos se enviarán a revisión. El sello solo cambiará con tu autorización.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>
+
+<footer>Proyecto de Pokédex independiente. Pokémon y sus nombres pertenecen a sus respectivos titulares.</footer>
+
+<script src="js/app.js" defer></script>
+</body>
+</html>
