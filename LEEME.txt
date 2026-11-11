@@ -1,0 +1,8 @@
+POKEDEX - VERSION ESTATICA
+
+1. Sube TODO el contenido de esta carpeta a la carpeta pública de tu hosting (por ejemplo public_html).
+2. index.html debe quedar directamente dentro de esa carpeta pública.
+3. Mantén las carpetas css, js e images junto a index.html.
+4. Coloca tus imágenes dentro de images y actualiza sus nombres/rutas en js/app.js.
+
+Esta versión solo contiene HTML, CSS y JavaScript. No incluye todavía Firebase, Google Login ni almacenamiento real de votos/valoraciones.
