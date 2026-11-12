@@ -1,8 +1,7 @@
-POKEDEX - VERSION ESTATICA
+POKEDEX - VERSION HTML, CSS Y JAVASCRIPT
 
-1. Sube TODO el contenido de esta carpeta a la carpeta pública de tu hosting (por ejemplo public_html).
-2. index.html debe quedar directamente dentro de esa carpeta pública.
-3. Mantén las carpetas css, js e images junto a index.html.
-4. Coloca tus imágenes dentro de images y actualiza sus nombres/rutas en js/app.js.
+Sube el contenido completo de esta carpeta a la raíz del repositorio GitHub Pages o a la carpeta pública del hosting. index.html debe quedar en la raíz y las carpetas css, js e images deben conservar sus nombres.
 
-Esta versión solo contiene HTML, CSS y JavaScript. No incluye todavía Firebase, Google Login ni almacenamiento real de votos/valoraciones.
+FUNCIONES: regiones Punta Arenas, Natales y Fuera de región; fichas individuales; selector de formas alternativas; propuesta de nuevos Pokémon; solicitudes de formas alternativas; solicitudes de cambio de región; votación de autenticidad; valoración por estrellas; panel de administración para aprobar o rechazar solicitudes. El panel de prueba está en la carpeta administracion/ y se abre sin contraseña.
+
+LIMITACIÓN: esta versión es una demostración local. Los datos se guardan en localStorage del navegador actual. Las solicitudes de otros visitantes no llegan a tu panel ni se comparten entre dispositivos. El panel de prueba no tiene protección de acceso; se dejó separado en /administracion para facilitar la futura incorporación de un inicio de sesión con PHP. Para una comunidad real será necesario conectar un servidor o base de datos y proteger la administración.

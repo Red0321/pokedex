@@ -1,3 +1,1 @@
-Coloca aquí tus imágenes de Pokémon.
-Ejemplo: 001-bulbasaur.png, 002-ivysaur.png, etc.
-Los nombres y rutas deben coincidir con los definidos en js/app.js.
+Coloca aquí las imágenes. Actualiza sus rutas en js/app.js.

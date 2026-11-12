@@ -1,0 +1,12 @@
+PANEL DE ADMINISTRACIÓN — MODO DE PRUEBA
+
+Dirección: tudominio-o-usuario.github.io/repositorio/administracion/
+
+Esta ruta abre el panel de administración sin contraseña para probar la maqueta en GitHub Pages.
+El panel sigue usando localStorage del navegador. No es privado ni seguro y las solicitudes
+solo se ven en el mismo navegador/dispositivo donde fueron creadas.
+
+PREPARACIÓN PARA LA ETAPA POSTERIOR
+Cuando se implemente la versión real, esta carpeta podrá alojar el acceso administrativo
+con PHP (por ejemplo, index.php) y la validación de credenciales/sesiones en el servidor.
+No basta con ocultar esta dirección: el servidor deberá verificar los permisos en cada acción.

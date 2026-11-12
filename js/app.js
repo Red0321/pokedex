@@ -1,117 +1,48 @@
-/*
-    AGREGA TUS POKÉMON AQUÍ.
-    Guarda las imágenes en una carpeta llamada "images".
-    Ejemplo: images/001-bulbasaur.png
-    Puedes añadir más imágenes en "gallery".
-    verified: true  = Pokémon oficial cuya imagen/diseño has confirmado.
-    verified: false = Pokémon original creado para tu proyecto (sin sello).
-    En la ficha personal, el estado aparece debajo de la imagen principal.
-  */
-  const pokemon = [
-    { number: 1, name: "Bulbasaur", region: "Kanto", image: "images/001-bulbasaur.png", gallery: [], verified: true, description: "Añade aquí la descripción de Bulbasaur." },
-    { number: 2, name: "Ivysaur", region: "Kanto", image: "images/002-ivysaur.png", gallery: [], verified: true, description: "Añade aquí la descripción de Ivysaur." },
-    { number: 3, name: "Venusaur", region: "Kanto", image: "images/003-venusaur.png", gallery: [], verified: true, description: "Añade aquí la descripción de Venusaur." },
-    { number: 4, name: "Charmander", region: "Kanto", image: "images/004-charmander.png", gallery: [], verified: true, description: "Añade aquí la descripción de Charmander." },
-    { number: 5, name: "Charmeleon", region: "Kanto", image: "images/005-charmeleon.png", gallery: [], verified: true, description: "Añade aquí la descripción de Charmeleon." },
-    { number: 6, name: "Charizard", region: "Kanto", image: "images/006-charizard.png", gallery: [], verified: true, description: "Añade aquí la descripción de Charizard." },
-    { number: 152, name: "Chikorita", region: "Johto", image: "images/152-chikorita.png", gallery: [], verified: true, description: "Añade aquí la descripción de Chikorita." },
-    { number: 155, name: "Cyndaquil", region: "Johto", image: "images/155-cyndaquil.png", gallery: [], verified: true, description: "Añade aquí la descripción de Cyndaquil." }
-  ];
+const initialPokemon=[
+{id:"001",number:1,name:"Bulbasaur",region:"Punta Arenas",image:"images/001-bulbasaur.png",description:"Añade aquí la descripción de Bulbasaur.",verification:"official",forms:[]},
+{id:"002",number:2,name:"Ivysaur",region:"Punta Arenas",image:"images/002-ivysaur.png",description:"Añade aquí la descripción de Ivysaur.",verification:"official",forms:[]},
+{id:"003",number:3,name:"Venusaur",region:"Punta Arenas",image:"images/003-venusaur.png",description:"Añade aquí la descripción de Venusaur.",verification:"official",forms:[]},
+{id:"004",number:4,name:"Charmander",region:"Punta Arenas",image:"images/004-charmander.png",description:"Añade aquí la descripción de Charmander.",verification:"official",forms:[]},
+{id:"005",number:5,name:"Charmeleon",region:"Punta Arenas",image:"images/005-charmeleon.png",description:"Añade aquí la descripción de Charmeleon.",verification:"official",forms:[]},
+{id:"006",number:6,name:"Charizard",region:"Punta Arenas",image:"images/006-charizard.png",description:"Añade aquí la descripción de Charizard.",verification:"official",forms:[]},
+{id:"152",number:152,name:"Chikorita",region:"Natales",image:"images/152-chikorita.png",description:"Añade aquí la descripción de Chikorita.",verification:"official",forms:[]},
+{id:"155",number:155,name:"Cyndaquil",region:"Natales",image:"images/155-cyndaquil.png",description:"Añade aquí la descripción de Cyndaquil.",verification:"official",forms:[]}];
+const keys={pokemon:"pokedex_demo_pokemon_v3",requests:"pokedex_demo_requests_v3",ratings:"pokedex_demo_ratings_v3",votes:"pokedex_demo_votes_v3"};
+function load(k,f){try{return JSON.parse(localStorage.getItem(k))??JSON.parse(JSON.stringify(f))}catch{return JSON.parse(JSON.stringify(f))}}
+let pokemon=load(keys.pokemon,initialPokemon),requests=load(keys.requests,[]),ratings=load(keys.ratings,{}),votes=load(keys.votes,{});
+// Migra los datos guardados por versiones anteriores que usaban los nombres Kanto y Johto.
+let migrated=false;
+for(const p of pokemon){if(p.region==="Kanto"){p.region="Punta Arenas";migrated=true}else if(p.region==="Johto"){p.region="Natales";migrated=true}}
+for(const r of requests){for(const k of ["region","fromRegion","toRegion"]){if(r[k]==="Kanto"){r[k]="Punta Arenas";migrated=true}else if(r[k]==="Johto"){r[k]="Natales";migrated=true}}}
+if(migrated){localStorage.setItem(keys.pokemon,JSON.stringify(pokemon));localStorage.setItem(keys.requests,JSON.stringify(requests))}
 
-  const grid = document.getElementById("pokemon-grid");
-  const search = document.getElementById("search");
-  let selectedRegion = "Kanto";
-
-  function padNumber(number) { return String(number).padStart(4, "0"); }
-
-  function imageMarkup(src, alt, className = "", verified = false) {
-    const seal = verified ? '<span class="verified-seal"><span class="check">✓</span> OFICIAL</span>' : '';
-    return `${seal}<img class="${className}" src="${src}" alt="${alt}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <div class="placeholder" style="display:none">Imagen pendiente<br><span>${alt}</span></div>`;
-  }
-
-  function renderGrid() {
-    const term = search.value.trim().toLowerCase();
-    const filtered = pokemon.filter(p => {
-      const matchesRegion = selectedRegion === "Todas" || p.region === selectedRegion;
-      const matchesSearch = p.name.toLowerCase().includes(term) || padNumber(p.number).includes(term) || String(p.number).includes(term);
-      return matchesRegion && matchesSearch;
-    });
-
-    document.getElementById("count").textContent = `${filtered.length} Pokémon`;
-    grid.innerHTML = filtered.map(p => `
-      <article class="pokemon-card">
-        <a class="card-link" href="#pokemon/${p.number}" onclick="openPokemon(${p.number}); return false;">
-          <div class="art">${imageMarkup(p.image, p.name, "", p.verified === true)}</div>
-          <div class="pokemon-name">${p.name}</div>
-          <div class="pokemon-number">N.º ${padNumber(p.number)}</div>
-          <div class="stars">☆☆☆☆☆ <span class="rating-note">Sin valoraciones</span></div>
-        </a>
-      </article>`).join("");
-
-    if (!filtered.length) grid.innerHTML = '<p>No se encontraron Pokémon con esos criterios.</p>';
-  }
-
-  function openPokemon(number) {
-    const p = pokemon.find(item => item.number === number);
-    if (!p) return;
-    document.getElementById("home").classList.add("hidden");
-    document.getElementById("detail").classList.add("active");
-    document.getElementById("detail-region").textContent = p.region;
-    document.getElementById("detail-name").textContent = p.name;
-    document.getElementById("detail-number").textContent = `N.º ${padNumber(p.number)}`;
-    document.getElementById("detail-description").textContent = p.description;
-    document.getElementById("detail-art").innerHTML = imageMarkup(p.image, p.name);
-    let verificationLabel = '<span class="verified-seal detail-seal" style="position:static;"><span class="check">✓</span> OFICIAL</span>';
-    if (p.verified !== true) {
-      verificationLabel = '<span class="small">Pokémon original</span>';
-    }
-    document.getElementById("detail-verification").innerHTML = verificationLabel;
-    document.getElementById("detail-region").textContent = p.region;
-    const images = [p.image, ...(p.gallery || [])];
-    document.getElementById("detail-gallery").innerHTML = images.map((src, i) =>
-      `<div class="art">${imageMarkup(src, `${p.name} imagen ${i + 1}`)}</div>`).join("");
-    document.querySelectorAll("#rating-picker button").forEach(btn => btn.classList.remove("selected"));
-    window.location.hash = `pokemon/${p.number}`;
-    window.scrollTo(0, 0);
-  }
-
-  function goHome() {
-    document.getElementById("detail").classList.remove("active");
-    document.getElementById("home").classList.remove("hidden");
-    history.replaceState(null, "", window.location.pathname + window.location.search);
-    window.scrollTo(0, 0);
-  }
-
-  function signInToRate() {
-    alert("El inicio de sesión con Google requiere configurar un proyecto Firebase. Esta demostración todavía no envía ni guarda valoraciones.");
-  }
-
-  function requestVerificationReview(vote) {
-    const choice = vote === "real" ? "Es real" : "Es falsa";
-    document.getElementById("verification-vote-status").textContent =
-      `Has seleccionado «${choice}». Para registrar el voto de forma segura se debe conectar el inicio de sesión con Google y Firebase. La decisión final seguirá siendo del administrador.`;
-    alert("La votación comunitaria es todavía una maqueta. Para guardar votos reales debemos conectar Firebase y el inicio de sesión con Google.");
-  }
-
-  document.querySelectorAll("#rating-picker button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("#rating-picker button").forEach(b => b.classList.toggle("selected", Number(b.dataset.value) <= Number(btn.dataset.value)));
-      signInToRate();
-    });
-  });
-
-  search.addEventListener("input", renderGrid);
-  function selectRegion(regionName) {
-    selectedRegion = regionName;
-    document.getElementById("btn-kanto").classList.toggle("active", regionName === "Kanto");
-    document.getElementById("btn-johto").classList.toggle("active", regionName === "Johto");
-    document.getElementById("region-label").textContent = `Región: ${regionName}`;
-    renderGrid();
-  }
-
-  selectRegion("Kanto");
-
-  // Permite abrir directamente una ficha mediante una dirección como #pokemon/1.
-  const match = window.location.hash.match(/^#pokemon\/(\d+)$/);
-  if (match) openPokemon(Number(match[1]));
+let selectedRegion="Punta Arenas",currentPokemonId=null,currentFormIndex=0,currentRequestType=null;
+const $=id=>document.getElementById(id), pad=n=>String(n).padStart(4,"0");
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function save(){Object.entries({[keys.pokemon]:pokemon,[keys.requests]:requests,[keys.ratings]:ratings,[keys.votes]:votes}).forEach(([k,v])=>localStorage.setItem(k,JSON.stringify(v)))}
+function img(src,alt){return src?`<img src="${esc(src)}" alt="${esc(alt)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="placeholder" style="display:none">${esc(alt)}<br>Imagen pendiente</div>`:`<div class="placeholder">${esc(alt)}<br>Imagen pendiente</div>`}
+function seal(s){return s==="community"?'<span class="seal community">✓ NO OFICIAL · VERIFICADO POR LA COMUNIDAD</span>':s==="original"?'<span class="seal original">ORIGINAL</span>':'<span class="seal official">✓ OFICIAL</span>'}
+function show(id){["home","detail","admin"].forEach(x=>$(x).classList.toggle("hidden",x!==id));scrollTo(0,0)}
+function goHome(){if(new URLSearchParams(location.search).get("admin")==="1"){location.href=location.pathname;return}show("home");history.replaceState(null,"",location.pathname+location.search);renderGrid()}
+function selectRegion(r){selectedRegion=r;document.querySelectorAll(".region-button").forEach(b=>b.classList.remove("active"));$("btn-"+(r==="Punta Arenas"?"punta":r==="Natales"?"natales":"outside")).classList.add("active");$("region-label").textContent="Región: "+r;renderGrid();show("home")}
+function renderGrid(){let term=$("search").value.trim().toLowerCase(),arr=pokemon.filter(p=>p.region===selectedRegion&&(p.name.toLowerCase().includes(term)||pad(p.number).includes(term)||String(p.number).includes(term)));$("count").textContent=arr.length+" Pokémon";$("pokemon-grid").innerHTML=arr.map(p=>{let rs=ratings[p.id]||[],avg=rs.length?rs.reduce((a,b)=>a+b,0)/rs.length:0,stars=rs.length?"★".repeat(Math.round(avg))+"☆".repeat(5-Math.round(avg)):"☆☆☆☆☆";return `<article class="pokemon-card"><a class="card-link" href="#pokemon/${encodeURIComponent(p.id)}" onclick="openPokemon('${esc(p.id)}');return false;"><div class="art">${img(p.image,p.name)}</div><div class="pokemon-name">${esc(p.name)}</div><div class="pokemon-number">N.º ${pad(p.number)}</div><div class="stars">${stars} <span class="rating-note">${rs.length?avg.toFixed(1)+" ("+rs.length+")":"Sin valoraciones"}</span></div></a></article>`}).join("")||'<div class="empty-state">No hay Pokémon en esta región con esos criterios.</div>'}
+function openPokemon(id){if(!pokemon.some(p=>p.id===id))return;currentPokemonId=id;currentFormIndex=0;renderDetail();show("detail");history.replaceState(null,"","#pokemon/"+encodeURIComponent(id))}
+function renderDetail(){let p=pokemon.find(x=>x.id===currentPokemonId);if(!p)return;let f=currentFormIndex===0?{name:"Forma original",image:p.image,description:p.description,gallery:[]} : p.forms[currentFormIndex-1];$("detail-region").textContent=p.region;$("detail-name").textContent=p.name;$("detail-number").textContent="N.º "+pad(p.number);$("detail-description").textContent=f.description||p.description||"Sin descripción disponible.";$("detail-art").innerHTML=img(f.image||p.image,p.name+" — "+f.name);$("detail-verification").innerHTML=seal(p.verification);$("detail-gallery").innerHTML=(f.gallery||[]).map((s,i)=>`<div class="art">${img(s,p.name+" imagen "+(i+1))}</div>`).join("");let forms=[{name:"Forma original"},...(p.forms||[])];$("form-tabs").innerHTML=forms.map((x,i)=>`<button class="form-tab ${i===currentFormIndex?"active":""}" onclick="selectForm(${i})">${esc(x.name||"Forma "+i)}</button>`).join("");renderRating();$("verification-vote-status").textContent=votes[p.id]?"Tu voto en este navegador: "+(votes[p.id]==="real"?"Es real":"Es falsa")+". Puedes cambiarlo.":"Los votos se envían a revisión. El sello solo cambia con autorización del administrador."}
+function selectForm(i){currentFormIndex=i;renderDetail()}
+function renderRating(){let a=ratings[currentPokemonId]||[],avg=a.length?a.reduce((x,y)=>x+y,0)/a.length:0;$("detail-average").textContent=a.length?"★".repeat(Math.round(avg))+"☆".repeat(5-Math.round(avg)):"☆☆☆☆☆";$("detail-votes").textContent=a.length?avg.toFixed(1)+" de 5 · "+a.length+" valoración(es) en este navegador":"Aún no hay valoraciones."}
+document.querySelectorAll("#rating-picker button").forEach(b=>b.addEventListener("click",()=>{if(!currentPokemonId)return;ratings[currentPokemonId]=ratings[currentPokemonId]||[];ratings[currentPokemonId].push(Number(b.dataset.value));save();renderRating();$("rating-feedback").textContent="Valoración guardada en este navegador de demostración."}));
+function addRequest(r){r.id="REQ-"+Date.now()+"-"+Math.floor(Math.random()*999);r.createdAt=new Date().toLocaleString("es-CL");r.status="pending";requests.unshift(r);save()}
+function castAuthenticityVote(v){let p=pokemon.find(x=>x.id===currentPokemonId);if(!p)return;votes[p.id]=v;addRequest({type:"verification",pokemonId:p.id,pokemonName:p.name,title:"Revisión de autenticidad: "+p.name,vote:v,details:v==="real"?"La comunidad considera correcta la clasificación como oficial.":"La comunidad solicita revisar si este Pokémon es realmente oficial."});$("verification-vote-status").textContent="Voto registrado en este navegador. El administrador deberá revisarlo."}
+function openRequestModal(type){currentRequestType=type;let p=pokemon.find(x=>x.id===currentPokemonId),fields=$("modal-fields");if(type==="newPokemon"){$("modal-title").textContent="Proponer un Pokémon nuevo";$("modal-description").textContent="La propuesta quedará pendiente hasta que el administrador la revise.";fields.innerHTML=`<div class="field"><label>Nombre del Pokémon *</label><input name="name" required maxlength="60"></div><div class="field"><label>Número de Pokédex *</label><input name="number" type="number" min="1" required></div><div class="field"><label>Región propuesta *</label><select name="region"><option>Punta Arenas</option><option>Natales</option><option>Fuera de región</option></select></div><div class="field"><label>Descripción *</label><textarea name="description" required></textarea></div><div class="field"><label>Imagen opcional (máximo 600 KB)</label><input name="image" type="file" accept="image/*"></div>`}
+else if(type==="alternateForm"){$("modal-title").textContent="Informar una forma alternativa";$("modal-description").textContent="La forma aprobada aparecerá dentro de la ficha de "+p.name+".";fields.innerHTML=`<div class="field"><label>Nombre de la forma *</label><input name="formName" required placeholder="Ej. Forma de Alola"></div><div class="field"><label>Descripción</label><textarea name="description"></textarea></div><div class="field"><label>Imagen opcional (máximo 600 KB)</label><input name="image" type="file" accept="image/*"></div><div class="field"><label>Motivo o fuente</label><textarea name="reason"></textarea></div>`}
+else{$("modal-title").textContent="Solicitar cambio de región";$("modal-description").textContent="Indica dónde consideras que debería clasificarse "+p.name+"." ;fields.innerHTML=`<div class="field"><label>Región actual</label><input value="${esc(p.region)}" disabled></div><div class="field"><label>Región propuesta *</label><select name="region"><option>Punta Arenas</option><option>Natales</option><option>Fuera de región</option></select></div><div class="field"><label>Motivo *</label><textarea name="reason" required></textarea></div>`;fields.querySelector("select").value=p.region==="Punta Arenas"?"Natales":"Punta Arenas"}
+$("form-error").textContent="";$("modal-backdrop").classList.remove("hidden");document.body.style.overflow="hidden"}
+function closeRequestModal(){$("modal-backdrop").classList.add("hidden");document.body.style.overflow="";$("request-form").reset()}
+function closeModalFromBackdrop(e){if(e.target.id==="modal-backdrop")closeRequestModal()}
+async function readImage(file){if(!file)return"";if(!file.type.startsWith("image/"))throw Error("El archivo debe ser una imagen.");if(file.size>600*1024)throw Error("La imagen supera los 600 KB permitidos.");return await new Promise((ok,no)=>{let r=new FileReader();r.onload=()=>ok(r.result);r.onerror=()=>no(Error("No se pudo leer la imagen."));r.readAsDataURL(file)})}
+$("request-form").addEventListener("submit",async e=>{e.preventDefault();let d=new FormData(e.currentTarget),file=e.currentTarget.querySelector('[type=file]')?.files?.[0];try{let image=await readImage(file);if(currentRequestType==="newPokemon")addRequest({type:"newPokemon",title:"Nuevo Pokémon: "+d.get("name"),pokemonName:d.get("name"),number:Number(d.get("number")),region:d.get("region"),description:d.get("description"),image,details:"Región propuesta: "+d.get("region")});else if(currentRequestType==="alternateForm"){let p=pokemon.find(x=>x.id===currentPokemonId);addRequest({type:"alternateForm",pokemonId:p.id,pokemonName:p.name,title:"Forma alternativa para "+p.name+": "+d.get("formName"),formName:d.get("formName"),description:d.get("description"),image,reason:d.get("reason"),details:d.get("reason")||"Sin explicación adicional."})}else{let p=pokemon.find(x=>x.id===currentPokemonId);addRequest({type:"regionChange",pokemonId:p.id,pokemonName:p.name,title:"Cambio de región para "+p.name,fromRegion:p.region,toRegion:d.get("region"),reason:d.get("reason"),details:p.region+" → "+d.get("region")+". "+d.get("reason")})}closeRequestModal();alert("Solicitud guardada en esta demostración. Puedes verla en el panel de administración de este mismo navegador.")}catch(err){$("form-error").textContent=err.message}});
+function openAdmin(){location.href="administracion/"}
+function typeName(t){return({newPokemon:"Nuevo Pokémon",alternateForm:"Forma alternativa",regionChange:"Cambio de región",verification:"Autenticidad"})[t]||"Solicitud"}
+function renderAdmin(){let types=["alternateForm","newPokemon","regionChange","verification"],labels=["Formas alternativas","Nuevos Pokémon","Cambios de región","Revisiones de autenticidad"];$("admin-stats").innerHTML=types.map((t,i)=>`<div class="stat-card"><span class="stat-number">${requests.filter(r=>r.type===t).length}</span><span class="stat-label">${labels[i]}</span></div>`).join("");let f=$("request-filter").value,arr=requests.filter(r=>f==="all"||r.status===f);$("requests-list").innerHTML=arr.map(r=>`<article class="request-card"><div class="request-top"><div><div class="request-type">${typeName(r.type)} · ${esc(r.createdAt||"")}</div><div class="request-title">${esc(r.title)}</div></div><span class="status ${r.status}">${r.status==="pending"?"Pendiente":r.status==="approved"?"Aprobada":"Rechazada"}</span></div><p class="small">${esc(r.details||"")}</p>${r.image?`<div class="art" style="max-width:180px;height:140px">${img(r.image,"Imagen propuesta")}</div>`:""}${r.status==="pending"?`<div class="request-actions"><button class="button" onclick="decideRequest('${r.id}','approved')">Aprobar</button><button class="button secondary" onclick="decideRequest('${r.id}','rejected')">Rechazar</button></div>`:""}</article>`).join("")||'<div class="empty-state">No hay solicitudes en esta categoría.</div>'}
+function decideRequest(id,decision){let r=requests.find(x=>x.id===id);if(!r||r.status!=="pending")return;if(decision==="approved"){if(r.type==="newPokemon"){if(pokemon.some(p=>p.name.toLowerCase()===r.pokemonName.toLowerCase()||p.number===r.number)){alert("Ya existe un Pokémon con ese nombre o número.");return}pokemon.push({id:"custom-"+Date.now(),number:r.number,name:r.pokemonName,region:r.region,image:r.image||"",description:r.description,verification:"original",forms:[]})}else if(r.type==="alternateForm"){let p=pokemon.find(x=>x.id===r.pokemonId);if(p)p.forms.push({name:r.formName,image:r.image||"",description:r.description||p.description,gallery:[]})}else if(r.type==="regionChange"){let p=pokemon.find(x=>x.id===r.pokemonId);if(p)p.region=r.toRegion}else if(r.type==="verification"){let p=pokemon.find(x=>x.id===r.pokemonId);if(p)p.verification=r.vote==="real"?"official":"community"}}r.status=decision;save();renderAdmin()}
+$("search").addEventListener("input",renderGrid);renderGrid();if(new URLSearchParams(location.search).get("admin")==="1")openAdmin();
